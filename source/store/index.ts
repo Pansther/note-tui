@@ -1,23 +1,26 @@
 import {create} from 'zustand';
 import {immer} from 'zustand/middleware/immer';
 
+import {getNotesFromDisk} from '../helper/file.js';
+
 interface Store {
-	list: {id: string; label: string}[];
 	selectedIndex: number;
+	previewContent?: string;
+	list: {label: string; filename: string}[];
 	next: () => void;
 	prev: () => void;
 	goFirst: () => void;
 	goLast: () => void;
+	reHydrate: () => void;
+	create: (filename: string) => void;
+	setPreviewContent: (content: string) => void;
 }
 
 const useStore = create(
 	immer<Store>(set => ({
-		list: [
-			{id: '1', label: '11111'},
-			{id: '2', label: '22222'},
-			{id: '3', label: '33333'},
-		],
 		selectedIndex: 0,
+		previewContent: '',
+		list: getNotesFromDisk(),
 		next: () =>
 			set(state => {
 				if (state.selectedIndex >= state.list.length - 1) {
@@ -41,6 +44,19 @@ const useStore = create(
 		goLast: () =>
 			set(state => {
 				state.selectedIndex = state.list.length - 1;
+			}),
+		create: (filename: string) =>
+			set(state => {
+				state.list.push({filename, label: 'New Note'});
+				state.selectedIndex = state.list.length - 1;
+			}),
+		reHydrate: () =>
+			set(state => {
+				state.list = getNotesFromDisk();
+			}),
+		setPreviewContent: (content: string) =>
+			set(state => {
+				state.previewContent = content;
 			}),
 	})),
 );

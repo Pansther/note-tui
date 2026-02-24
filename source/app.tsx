@@ -15,10 +15,15 @@ marked.setOptions({
 });
 
 export default function App() {
-	const {selectedIndex, list} = useStore(
+	const {
+		list,
+		selectedIndex,
+		previewContent = '',
+	} = useStore(
 		useShallow(s => ({
 			list: s.list,
 			selectedIndex: s.selectedIndex,
+			previewContent: s.previewContent,
 		})),
 	);
 
@@ -30,8 +35,8 @@ export default function App() {
 		<Box>
 			<Box width="30%" borderStyle="single">
 				<ScrollList ref={listRef} selectedIndex={selectedIndex}>
-					{list.map(({id, label}, i) => (
-						<Box key={id}>
+					{list.map(({filename, label}, i) => (
+						<Box key={filename}>
 							<Text color={i === selectedIndex ? 'green' : 'white'}>
 								{i === selectedIndex ? '> ' : '  '}
 								{label}
@@ -43,7 +48,7 @@ export default function App() {
 
 			<Box width="70%" borderStyle="single">
 				<Text wrap="wrap">
-					{marked.parse(`# Hello \n - ❤️ Apple \n - 🧡 Orange \n - - -`, {
+					{marked.parse(previewContent, {
 						async: false,
 					})}
 				</Text>
