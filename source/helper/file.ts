@@ -29,9 +29,7 @@ export const getNotesFromDisk = () => {
 };
 
 export const saveNote = (title: string, content: string) => {
-	if (!fs.existsSync(NOTES_DIR)) {
-		fs.mkdirSync(NOTES_DIR);
-	}
+	if (!fs.existsSync(NOTES_DIR)) fs.mkdirSync(NOTES_DIR);
 
 	const filename = title.toLowerCase().replace(/\s+/g, '-');
 	const filePath = path.join(NOTES_DIR, filename);

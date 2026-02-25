@@ -3,7 +3,10 @@ import {immer} from 'zustand/middleware/immer';
 
 import {getNotesFromDisk} from '../helper/file.js';
 
+import {FocusPane} from './type.js';
+
 interface Store {
+	focusPane: FocusPane;
 	selectedIndex: number;
 	previewContent?: string;
 	list: {label: string; filename: string}[];
@@ -13,13 +16,16 @@ interface Store {
 	goLast: () => void;
 	reHydrate: () => void;
 	create: (filename: string) => void;
+	setSelectedIndex: (index: number) => void;
 	setPreviewContent: (content: string) => void;
+	setFocusPane: (pane: FocusPane) => void;
 }
 
 const useStore = create(
 	immer<Store>(set => ({
 		selectedIndex: 0,
 		previewContent: '',
+		focusPane: FocusPane.List,
 		list: getNotesFromDisk(),
 		next: () =>
 			set(state => {
@@ -54,9 +60,17 @@ const useStore = create(
 			set(state => {
 				state.list = getNotesFromDisk();
 			}),
+		setSelectedIndex: index =>
+			set(state => {
+				state.selectedIndex = index;
+			}),
 		setPreviewContent: (content: string) =>
 			set(state => {
 				state.previewContent = content;
+			}),
+		setFocusPane: pane =>
+			set(state => {
+				state.focusPane = pane;
 			}),
 	})),
 );
