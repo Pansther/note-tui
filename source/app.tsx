@@ -3,6 +3,7 @@ import cx from 'clsx';
 import chalk from 'chalk';
 import {marked} from 'marked';
 import {Box, Text} from 'ink';
+import TextInput from 'ink-text-input';
 import {useShallow} from 'zustand/shallow';
 import TerminalRenderer from 'marked-terminal';
 import {ScrollView, ScrollViewRef} from 'ink-scroll-view';
@@ -41,8 +42,11 @@ export default function App() {
 	const viewRef = useRef<ScrollViewRef>(null);
 
 	const {dimensions} = useDimension({viewRef});
-
-	useNavigation({viewRef});
+	const {
+		fileLabel = '',
+		isCreatingFile,
+		setFileLabel,
+	} = useNavigation({viewRef});
 
 	useEffect(() => {
 		viewRef?.current?.scrollToTop();
@@ -53,18 +57,37 @@ export default function App() {
 			<Box
 				width="30%"
 				borderStyle="round"
+				flexDirection="column"
 				borderColor={cx({red: focusPane === FocusPane.List})}
 			>
-				<ScrollList ref={listRef} selectedIndex={selectedIndex}>
+				<ScrollList ref={listRef} selectedIndex={selectedIndex} height="100%">
 					{list.map(({filename, label}, i) => (
 						<Box key={filename}>
-							<Text color={i === selectedIndex ? 'green' : 'white'}>
-								{i === selectedIndex ? '> ' : '  '}
-								{i + 1}. {label}
-							</Text>
+							<Box
+								width="100%"
+								backgroundColor={cx({
+									red: i === selectedIndex && !isCreatingFile,
+								})}
+							>
+								<Text wrap="truncate">
+									{' '}
+									{i + 1}. {label}
+								</Text>
+								<Text> </Text>
+							</Box>
 						</Box>
 					))}
 				</ScrollList>
+				{isCreatingFile && (
+					<Box width="100%" backgroundColor="red" overflow="hidden">
+						<Text> {list?.length + 1}. </Text>
+						<TextInput
+							value={fileLabel}
+							placeholder="New Note"
+							onChange={setFileLabel}
+						/>
+					</Box>
+				)}
 			</Box>
 
 			<Box

@@ -1,4 +1,4 @@
-import {RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import {useInput} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -46,6 +46,10 @@ const useNavigation = ({
 		})),
 	);
 
+	const [fileLabel, setFileLabel] = useState<string>();
+
+	const isCreatingFile = fileLabel !== undefined;
+
 	const scrollViewDown = (scrollBy: number) => {
 		if (!viewRef?.current) return;
 
@@ -62,6 +66,29 @@ const useNavigation = ({
 	};
 
 	useInput((input, key) => {
+		if (isCreatingFile) {
+			if (key.escape) {
+				setFileLabel(undefined);
+			}
+
+			if (key.return) {
+				const _fileLabel = fileLabel || 'New Note';
+				const fileTimestamp = dayjs().format('YYYY-MM-DD-HHmmss');
+				const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
+				const filename = `note-${fileTimestamp}.md`;
+				const content = [`# ${_fileLabel}`, `Created: ${timestamp}`].join(
+					'\n\n',
+				);
+
+				saveNote(filename, content);
+				create(_fileLabel, filename);
+
+				setFileLabel(undefined);
+			}
+
+			return;
+		}
+
 		if (input === 'q') {
 			process.exit();
 		}
@@ -104,13 +131,8 @@ const useNavigation = ({
 			}
 
 			if (input === 'n') {
-				const fileTimestamp = dayjs().format('YYYY-MM-DD-HHmmss');
-				const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
-				const filename = `note-${fileTimestamp}.md`;
-				const content = ['# New Note', `Created: ${timestamp}`].join('\n\n');
-
-				saveNote(filename, content);
-				create(filename);
+				goLast();
+				setFileLabel('');
 			}
 		} else if (focusPane === FocusPane.Preview) {
 			if (!viewRef?.current) return;
@@ -180,6 +202,12 @@ const useNavigation = ({
 
 		syncPreviewContent();
 	}, [list, selectedIndex]);
+
+	return {
+		fileLabel,
+		isCreatingFile,
+		setFileLabel,
+	};
 };
 
 export default useNavigation;

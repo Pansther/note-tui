@@ -15,7 +15,7 @@ interface Store {
 	goFirst: () => void;
 	goLast: () => void;
 	reHydrate: () => void;
-	create: (filename: string) => void;
+	create: (fileLabel: string, filename: string) => void;
 	setSelectedIndex: (index: number) => void;
 	setPreviewContent: (content: string) => void;
 	setFocusPane: (pane: FocusPane) => void;
@@ -51,9 +51,9 @@ const useStore = create(
 			set(state => {
 				state.selectedIndex = state.list.length - 1;
 			}),
-		create: (filename: string) =>
+		create: (fileLabel, filename) =>
 			set(state => {
-				state.list.push({filename, label: 'New Note'});
+				state.list.push({filename, label: fileLabel});
 				state.selectedIndex = state.list.length - 1;
 			}),
 		reHydrate: () =>
@@ -64,7 +64,7 @@ const useStore = create(
 			set(state => {
 				state.selectedIndex = index;
 			}),
-		setPreviewContent: (content: string) =>
+		setPreviewContent: content =>
 			set(state => {
 				state.previewContent = content;
 			}),
