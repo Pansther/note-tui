@@ -11,9 +11,9 @@ import {ScrollList, ScrollListRef} from 'ink-scroll-list';
 
 import useStore from './store/index.js';
 import useDimension from './hooks/useDimension.js';
-import useNavigation from './hooks/useNavigation.js';
+import useNavigation from './hooks/useNavigation/index.js';
 
-import {FocusPane} from './store/type.js';
+import {FocusPane, Mode} from './store/type.js';
 
 marked.setOptions({
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -25,6 +25,7 @@ marked.setOptions({
 
 export default function App() {
 	const {
+		mode,
 		list,
 		focusPane,
 		selectedIndex,
@@ -32,6 +33,7 @@ export default function App() {
 	} = useStore(
 		useShallow(s => ({
 			list: s.list,
+			mode: s.mode,
 			focusPane: s.focusPane,
 			selectedIndex: s.selectedIndex,
 			previewContent: s.previewContent,
@@ -42,11 +44,10 @@ export default function App() {
 	const viewRef = useRef<ScrollViewRef>(null);
 
 	const {dimensions} = useDimension({viewRef});
-	const {
-		fileLabel = '',
-		isCreatingFile,
-		setFileLabel,
-	} = useNavigation({viewRef});
+	const {fileLabel = '', setFileLabel} = useNavigation({viewRef});
+
+	const isCreatingFile = mode === Mode.Create;
+	const isArchivedFile = mode === Mode.Archived;
 
 	useEffect(() => {
 		viewRef?.current?.scrollToTop();
@@ -61,22 +62,31 @@ export default function App() {
 				borderColor={cx({red: focusPane === FocusPane.List})}
 			>
 				<ScrollList ref={listRef} selectedIndex={selectedIndex} height="100%">
-					{list.map(({filename, label}, i) => (
-						<Box key={filename}>
-							<Box
-								width="100%"
-								backgroundColor={cx({
-									red: i === selectedIndex && !isCreatingFile,
-								})}
-							>
-								<Text wrap="truncate">
-									{' '}
-									{i + 1}. {label}
-								</Text>
-								<Text> </Text>
+					{list.map(({filename, label}, i) => {
+						let fileLabel = label;
+						const isSelected = i === selectedIndex;
+
+						if (isArchivedFile && isSelected) {
+							fileLabel = 'Confirm archived ? (y/n)';
+						}
+
+						return (
+							<Box key={filename}>
+								<Box
+									width="100%"
+									backgroundColor={cx({
+										red: isSelected && !isCreatingFile,
+									})}
+								>
+									<Text wrap="truncate">
+										{' '}
+										{i + 1}. {fileLabel}
+									</Text>
+									<Text> </Text>
+								</Box>
 							</Box>
-						</Box>
-					))}
+						);
+					})}
 				</ScrollList>
 				{isCreatingFile && (
 					<Box width="100%" backgroundColor="red" overflow="hidden">

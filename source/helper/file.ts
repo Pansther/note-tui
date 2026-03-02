@@ -2,15 +2,18 @@ import os from 'os';
 import fs from 'fs';
 import path from 'path';
 
+import type {ListItem} from '../store/type.js';
+
 export const NOTES_DIR = path.join(os.homedir(), '.notes');
+export const TRASH_DIR = path.join(NOTES_DIR, '.trash');
 
-export const getNotesFromDisk = () => {
-	if (!fs.existsSync(NOTES_DIR)) fs.mkdirSync(NOTES_DIR);
+export const getNotesFromDisk = (dir = NOTES_DIR): ListItem[] => {
+	if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-	const files = fs.readdirSync(NOTES_DIR).filter(file => file.endsWith('.md'));
+	const files = fs.readdirSync(dir).filter(file => file.endsWith('.md'));
 
 	const notesList = files?.map(filename => {
-		const filePath = path.join(NOTES_DIR, filename);
+		const filePath = path.join(dir, filename);
 		const content = fs.readFileSync(filePath, 'utf-8');
 
 		const firstLine = content.split('\n')[0];
@@ -48,5 +51,22 @@ export const getFileContent = (filename: string) => {
 		return content;
 	} catch (error) {
 		return null;
+	}
+};
+
+export const moveFileToTrash = (filename: string) => {
+	if (!fs.existsSync(TRASH_DIR)) {
+		fs.mkdirSync(TRASH_DIR, {recursive: true});
+	}
+
+	const oldPath = path.join(NOTES_DIR, filename);
+	const newPath = path.join(TRASH_DIR, filename);
+
+	try {
+		if (fs.existsSync(oldPath)) {
+			fs.renameSync(oldPath, newPath);
+		}
+	} catch (error) {
+		//
 	}
 };
