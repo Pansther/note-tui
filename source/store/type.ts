@@ -14,3 +14,9 @@ export enum Mode {
 	Edit,
 	Archived,
 }
+
+export interface NoteMetadata {
+	createdDate: string;
+	updatedDate: string;
+	deletedDate?: string;
+}

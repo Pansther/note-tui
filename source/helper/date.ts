@@ -1,0 +1,7 @@
+import dayjs, {Dayjs} from 'dayjs';
+
+export const formatDateTime = (date: Date | string | Dayjs) => {
+	if (!date) return '';
+
+	return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+};

@@ -1,15 +1,18 @@
 import {create} from 'zustand';
 import {immer} from 'zustand/middleware/immer';
 
-import {getFileContent, getNotesFromDisk} from '../helper/file.js';
+import {getFileContent, getFileMeta, getNotesFromDisk} from '../helper/file.js';
 
-import {FocusPane, ListItem, Mode} from './type.js';
+import {FocusPane, ListItem, Mode, NoteMetadata} from './type.js';
 
 interface Store {
 	mode: Mode;
 	focusPane: FocusPane;
 	selectedIndex: number;
-	previewContent?: string;
+	previewData: {
+		content: string;
+		meta: NoteMetadata;
+	};
 	list: ListItem[];
 	next: () => void;
 	prev: () => void;
@@ -19,7 +22,7 @@ interface Store {
 	create: (fileLabel: string, filename: string) => void;
 	moveToTrash: () => void;
 	setSelectedIndex: (index: number) => void;
-	setPreviewContent: (content: string) => void;
+	setPreviewContent: () => void;
 	setFocusPane: (pane: FocusPane) => void;
 	setMode: (mode: Mode) => void;
 	setList: (list: ListItem[]) => void;
@@ -29,7 +32,10 @@ const useStore = create(
 	immer<Store>(set => ({
 		mode: Mode.Idle,
 		selectedIndex: 0,
-		previewContent: '',
+		previewData: {
+			content: '',
+			meta: {} as NoteMetadata,
+		},
 		focusPane: FocusPane.List,
 		list: getNotesFromDisk(),
 		setList: list =>
@@ -86,9 +92,31 @@ const useStore = create(
 			set(state => {
 				state.selectedIndex = index;
 			}),
-		setPreviewContent: content =>
+		setPreviewContent: () =>
 			set(state => {
-				state.previewContent = content;
+				const selected = state?.list?.[state.selectedIndex];
+
+				if (!selected) return;
+
+				const content = getFileContent(selected.filename);
+
+				state.previewData.content = content || '';
+
+				try {
+					const metaContent = getFileMeta(selected.filename);
+
+					if (!metaContent) throw new Error('Not Found');
+
+					const meta = JSON.parse(metaContent);
+
+					state.previewData.meta = meta || '';
+				} catch (error) {
+					state.previewData.meta = {
+						createdDate: '',
+						updatedDate: '',
+						deletedDate: '',
+					};
+				}
 			}),
 		setFocusPane: pane =>
 			set(state => {

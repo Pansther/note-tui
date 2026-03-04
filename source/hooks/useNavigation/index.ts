@@ -7,12 +7,19 @@ import {ScrollViewRef} from 'ink-scroll-view';
 import useStore from '../../store/index.js';
 
 import {
+	saveMeta,
+	saveNote,
+	updateMeta,
+	moveFileToTrash,
+	moveMetaToTrash,
+} from '../../helper/file.js';
+import {
 	InputHandler,
 	getNavigationListKey,
 	getNavigationPreviewKey,
 } from './helper.js';
 import {openEditor} from '../../helper/editor.js';
-import {getFileContent, moveFileToTrash, saveNote} from '../../helper/file.js';
+import {formatDateTime} from '../../helper/date.js';
 
 import {FocusPane, Mode} from '../../store/type.js';
 import {AvailableListKey, AvailablePreviewKey} from './type.js';
@@ -120,12 +127,11 @@ const useNavigation = ({
 				const {filename} = list[selectedIndex];
 
 				setMode(Mode.Edit);
-
-				const content = openEditor(filename);
+				openEditor(filename);
 
 				reHydrate();
 				setMode(Mode.Idle);
-				setPreviewContent(content || '');
+				updateMeta(filename);
 
 				break;
 			}
@@ -188,12 +194,13 @@ const useNavigation = ({
 				if (key.return) {
 					const _fileLabel = fileLabel || 'New Note';
 					const fileTimestamp = dayjs().format('YYYY-MM-DD-HHmmss');
-					const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
+					const timestamp = formatDateTime(new Date());
 					const filename = `note-${fileTimestamp}.md`;
 					const content = [`# ${_fileLabel}`, `Created: ${timestamp}`].join(
 						'\n\n',
 					);
 
+					saveMeta(filename);
 					saveNote(filename, content);
 					create(_fileLabel, filename);
 
@@ -215,6 +222,7 @@ const useNavigation = ({
 
 					moveToTrash();
 					moveFileToTrash(filename);
+					moveMetaToTrash(filename);
 					reHydrate();
 				}
 
@@ -235,6 +243,11 @@ const useNavigation = ({
 					setFocusPane(FocusPane.Preview);
 				}
 
+				if (key.tab) {
+					if (focusPane === FocusPane.List) setFocusPane(FocusPane.Preview);
+					if (focusPane === FocusPane.Preview) setFocusPane(FocusPane.List);
+				}
+
 				if (focusPane === FocusPane.List) {
 					navigateListView(input, key);
 				}
@@ -247,18 +260,7 @@ const useNavigation = ({
 	});
 
 	useEffect(() => {
-		const syncPreviewContent = () => {
-			if (!list?.length) return;
-			if (!list?.[selectedIndex]) return;
-
-			const {filename} = list[selectedIndex];
-
-			const fileContent = getFileContent(filename);
-
-			setPreviewContent(fileContent || '');
-		};
-
-		syncPreviewContent();
+		setPreviewContent();
 	}, [list, selectedIndex]);
 
 	return {

@@ -2,7 +2,7 @@ import {useEffect, useRef} from 'react';
 import cx from 'clsx';
 import chalk from 'chalk';
 import {marked} from 'marked';
-import {Box, Text} from 'ink';
+import {Box, Spacer, Text} from 'ink';
 import TextInput from 'ink-text-input';
 import {useShallow} from 'zustand/shallow';
 import TerminalRenderer from 'marked-terminal';
@@ -12,6 +12,8 @@ import {ScrollList, ScrollListRef} from 'ink-scroll-list';
 import useStore from './store/index.js';
 import useDimension from './hooks/useDimension.js';
 import useNavigation from './hooks/useNavigation/index.js';
+
+import {formatDateTime} from './helper/date.js';
 
 import {FocusPane, Mode} from './store/type.js';
 
@@ -24,19 +26,13 @@ marked.setOptions({
 });
 
 export default function App() {
-	const {
-		mode,
-		list,
-		focusPane,
-		selectedIndex,
-		previewContent = '',
-	} = useStore(
+	const {mode, list, focusPane, selectedIndex, previewData} = useStore(
 		useShallow(s => ({
 			list: s.list,
 			mode: s.mode,
 			focusPane: s.focusPane,
 			selectedIndex: s.selectedIndex,
-			previewContent: s.previewContent,
+			previewData: s.previewData,
 		})),
 	);
 
@@ -103,16 +99,29 @@ export default function App() {
 			<Box
 				width="70%"
 				borderStyle="round"
+				flexDirection="column"
 				borderColor={cx({red: focusPane === FocusPane.Preview})}
 			>
-				<ScrollView ref={viewRef}>
+				<ScrollView width="100%" ref={viewRef} height={dimensions.height - 4}>
 					<Text wrap="wrap">
-						{marked.parse(previewContent, {
+						{marked.parse(previewData?.content, {
 							async: false,
 						})}
 					</Text>
-					<Box height={5} />
 				</ScrollView>
+
+				<Spacer />
+
+				<Box width="100%" gap={1} backgroundColor="gray">
+					<Text wrap="wrap">
+						{' '}
+						Created: {formatDateTime(previewData.meta?.createdDate) || '-'}
+					</Text>
+					<Text>|</Text>
+					<Text wrap="wrap">
+						Updated: {formatDateTime(previewData.meta?.updatedDate) || '-'}
+					</Text>
+				</Box>
 			</Box>
 		</Box>
 	);
