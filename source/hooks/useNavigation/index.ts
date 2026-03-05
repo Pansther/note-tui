@@ -1,34 +1,34 @@
-import {RefObject, useEffect, useState} from 'react';
+import {useState} from 'react';
 import dayjs from 'dayjs';
 import {useInput} from 'ink';
 import {useShallow} from 'zustand/shallow';
-import {ScrollViewRef} from 'ink-scroll-view';
 
 import useStore from '../../store/index.js';
 
 import {
+	TRASH_DIR,
 	saveMeta,
 	saveNote,
 	updateMeta,
+	deleteFile,
+	deleteMeta,
+	restoreFile,
+	restoreMeta,
 	moveFileToTrash,
 	moveMetaToTrash,
 } from '../../helper/file.js';
 import {
 	InputHandler,
 	getNavigationListKey,
-	getNavigationPreviewKey,
+	getNavigationTrashKey,
 } from './helper.js';
 import {openEditor} from '../../helper/editor.js';
 import {formatDateTime} from '../../helper/date.js';
 
 import {FocusPane, Mode} from '../../store/type.js';
-import {AvailableListKey, AvailablePreviewKey} from './type.js';
+import {AvailableListKey, AvailableTrashKey} from './type.js';
 
-const useNavigation = ({
-	viewRef,
-}: {
-	viewRef: RefObject<ScrollViewRef | null>;
-}) => {
+const useNavigation = () => {
 	const {
 		mode,
 		list,
@@ -41,10 +41,9 @@ const useNavigation = ({
 		goFirst,
 		setMode,
 		reHydrate,
-		moveToTrash,
 		setFocusPane,
+		calculateIndex,
 		setSelectedIndex,
-		setPreviewContent,
 	} = useStore(
 		useShallow(s => ({
 			mode: s.mode,
@@ -54,33 +53,18 @@ const useNavigation = ({
 			next: s.next,
 			prev: s.prev,
 			create: s.create,
-			moveToTrash: s.moveToTrash,
 			goLast: s.goLast,
 			setMode: s.setMode,
 			goFirst: s.goFirst,
+			setList: s.setList,
 			reHydrate: s.reHydrate,
 			setFocusPane: s.setFocusPane,
+			calculateIndex: s.calculateIndex,
 			setSelectedIndex: s.setSelectedIndex,
-			setPreviewContent: s.setPreviewContent,
 		})),
 	);
 
 	const [fileLabel, setFileLabel] = useState<string>();
-
-	const scrollViewDown = (scrollBy: number) => {
-		if (!viewRef?.current) return;
-
-		const viewportHeight = viewRef.current.getViewportHeight();
-		const contentHeight = viewRef.current.getContentHeight();
-		const maxOffset = Math.max(0, contentHeight - viewportHeight);
-		const currentOffset = viewRef.current.getScrollOffset();
-
-		if (currentOffset + scrollBy >= maxOffset) {
-			viewRef.current.scrollToBottom();
-		} else {
-			viewRef.current.scrollBy(scrollBy);
-		}
-	};
 
 	const cancelCreate = () => {
 		setFileLabel(undefined);
@@ -148,39 +132,81 @@ const useNavigation = ({
 
 				break;
 			}
+
+			case AvailableListKey.Trash: {
+				setMode(Mode.Trash);
+				setSelectedIndex(0);
+				reHydrate(TRASH_DIR);
+
+				break;
+			}
 		}
 	};
 
-	const navigatePreviewView: InputHandler = (input, key) => {
-		if (!viewRef?.current) return;
-
-		const Key = getNavigationPreviewKey(input, key);
+	const navigateTrashView: InputHandler = (input, key) => {
+		const Key = getNavigationTrashKey(input, key);
 
 		switch (Key) {
-			case AvailablePreviewKey.Down:
-				return scrollViewDown(1);
-			case AvailablePreviewKey.Up:
-				return viewRef.current.scrollBy(-1);
-			case AvailablePreviewKey.GoFirst:
-				return viewRef.current.scrollToTop();
-			case AvailablePreviewKey.GoLast:
-				return viewRef.current.scrollToBottom();
-			case AvailablePreviewKey.ScrollDown: {
-				const height = viewRef?.current?.getViewportHeight() ?? 10;
-				const scrollBy = Math.floor(height / 2);
+			case AvailableTrashKey.Next:
+				return next();
+			case AvailableTrashKey.Prev:
+				return prev();
+			case AvailableTrashKey.GoFirst:
+				return goFirst();
+			case AvailableTrashKey.GoLast:
+				return goLast();
+			case AvailableTrashKey.ScrollDown: {
+				const scrollIndex = selectedIndex + 5;
 
-				scrollViewDown(scrollBy);
-
-				break;
-			}
-			case AvailablePreviewKey.ScrollUp: {
-				const height = viewRef?.current?.getViewportHeight() ?? 10;
-				const scrollBy = Math.floor(height / 2);
-
-				viewRef?.current?.scrollBy(-scrollBy);
+				if (scrollIndex >= list?.length - 1) {
+					goLast();
+				} else {
+					setSelectedIndex(scrollIndex);
+				}
 
 				break;
 			}
+			case AvailableTrashKey.ScrollUp: {
+				const scrollIndex = selectedIndex - 5;
+
+				if (scrollIndex < 0) {
+					goFirst();
+				} else {
+					setSelectedIndex(scrollIndex);
+				}
+
+				break;
+			}
+			case AvailableTrashKey.Restore: {
+				const selected = list?.[selectedIndex];
+
+				if (!selected) return;
+
+				restoreFile(selected.filename);
+				restoreMeta(selected.filename);
+				calculateIndex();
+				reHydrate(TRASH_DIR);
+
+				break;
+			}
+			case AvailableTrashKey.Delete: {
+				setMode(Mode.Delete);
+			}
+		}
+	};
+
+	const navigatePane: InputHandler = (input, key) => {
+		if (input === 'h' || key.leftArrow) {
+			setFocusPane(FocusPane.List);
+		}
+
+		if (input === 'l' || key.rightArrow) {
+			setFocusPane(FocusPane.Preview);
+		}
+
+		if (key.tab) {
+			if (focusPane === FocusPane.List) setFocusPane(FocusPane.Preview);
+			if (focusPane === FocusPane.Preview) setFocusPane(FocusPane.List);
 		}
 	};
 
@@ -220,10 +246,47 @@ const useNavigation = ({
 
 					const {filename} = list[selectedIndex];
 
-					moveToTrash();
+					calculateIndex();
 					moveFileToTrash(filename);
 					moveMetaToTrash(filename);
 					reHydrate();
+					setMode(Mode.Idle);
+				}
+
+				break;
+			}
+
+			case Mode.Trash: {
+				navigatePane(input, key);
+
+				if (focusPane === FocusPane.List) {
+					if (input === 'q' || key.escape) {
+						setMode(Mode.Idle);
+						setSelectedIndex(0);
+						reHydrate();
+					}
+
+					navigateTrashView(input, key);
+				}
+
+				break;
+			}
+
+			case Mode.Delete: {
+				if (input === 'n' || key.escape) {
+					setMode(Mode.Trash);
+				}
+
+				if (input === 'y' || key.return) {
+					if (!list?.[selectedIndex]) return;
+
+					const {filename} = list[selectedIndex];
+
+					deleteFile({filename});
+					deleteMeta(filename);
+					calculateIndex();
+					reHydrate(TRASH_DIR);
+					setMode(Mode.Trash);
 				}
 
 				break;
@@ -231,37 +294,18 @@ const useNavigation = ({
 
 			case Mode.Idle:
 			default: {
+				navigatePane(input, key);
+
 				if (input === 'q') {
 					process.exit();
-				}
-
-				if (input === 'h' || key.leftArrow) {
-					setFocusPane(FocusPane.List);
-				}
-
-				if (input === 'l' || key.rightArrow) {
-					setFocusPane(FocusPane.Preview);
-				}
-
-				if (key.tab) {
-					if (focusPane === FocusPane.List) setFocusPane(FocusPane.Preview);
-					if (focusPane === FocusPane.Preview) setFocusPane(FocusPane.List);
 				}
 
 				if (focusPane === FocusPane.List) {
 					navigateListView(input, key);
 				}
-
-				if (focusPane === FocusPane.Preview) {
-					navigatePreviewView(input, key);
-				}
 			}
 		}
 	});
-
-	useEffect(() => {
-		setPreviewContent();
-	}, [list, selectedIndex]);
 
 	return {
 		fileLabel,

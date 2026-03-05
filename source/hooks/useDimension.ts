@@ -1,12 +1,7 @@
-import {RefObject, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useStdout} from 'ink';
-import {ScrollViewRef} from 'ink-scroll-view';
 
-const useDimension = ({
-	viewRef,
-}: {
-	viewRef: RefObject<ScrollViewRef | null>;
-}) => {
+const useDimension = () => {
 	const {stdout} = useStdout();
 
 	const [dimensions, setDimensions] = useState({
@@ -20,8 +15,6 @@ const useDimension = ({
 				width: stdout?.columns || 80,
 				height: stdout?.rows || 24,
 			});
-
-			viewRef.current?.remeasure();
 		};
 
 		stdout?.on('resize', onResize);

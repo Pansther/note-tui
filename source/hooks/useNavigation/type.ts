@@ -8,6 +8,18 @@ export enum AvailableListKey {
 	Edit = 'e',
 	Create = 'n',
 	Archived = 'd',
+	Trash = 't',
+}
+
+export enum AvailableTrashKey {
+	Next = 'j',
+	Prev = 'k',
+	GoFirst = 'g',
+	GoLast = 'G',
+	ScrollDown = '<C-d>',
+	ScrollUp = '<C-u>',
+	Restore = 'r',
+	Delete = 'd',
 }
 
 export enum AvailablePreviewKey {

@@ -1,7 +1,13 @@
 import {create} from 'zustand';
 import {immer} from 'zustand/middleware/immer';
 
-import {getFileContent, getFileMeta, getNotesFromDisk} from '../helper/file.js';
+import {
+	META_DIR,
+	META_TRASH_DIR,
+	getFileMeta,
+	getFileContent,
+	getNotesFromDisk,
+} from '../helper/file.js';
 
 import {FocusPane, ListItem, Mode, NoteMetadata} from './type.js';
 
@@ -18,14 +24,15 @@ interface Store {
 	prev: () => void;
 	goFirst: () => void;
 	goLast: () => void;
-	reHydrate: () => void;
+	reHydrate: (dir?: string) => void;
 	create: (fileLabel: string, filename: string) => void;
-	moveToTrash: () => void;
+	calculateIndex: () => void;
 	setSelectedIndex: (index: number) => void;
-	setPreviewContent: () => void;
+	setPreviewContent: (dir?: string) => void;
 	setFocusPane: (pane: FocusPane) => void;
 	setMode: (mode: Mode) => void;
 	setList: (list: ListItem[]) => void;
+	restore: () => void;
 }
 
 const useStore = create(
@@ -72,10 +79,8 @@ const useStore = create(
 				state.list.push({filename, label: fileLabel});
 				state.selectedIndex = state.list.length - 1;
 			}),
-		moveToTrash: () =>
+		calculateIndex: () =>
 			set(state => {
-				state.mode = Mode.Idle;
-
 				const prevIndex = state.selectedIndex;
 				const nextIndex =
 					prevIndex >= state.list?.length - 1
@@ -84,26 +89,44 @@ const useStore = create(
 
 				state.selectedIndex = nextIndex;
 			}),
-		reHydrate: () =>
+		restore: () =>
 			set(state => {
-				state.list = getNotesFromDisk();
+				const prevIndex = state.selectedIndex;
+				const nextIndex =
+					prevIndex >= state.list?.length - 1
+						? Math.max(0, prevIndex - 1)
+						: prevIndex;
+
+				state.selectedIndex = nextIndex;
+			}),
+		reHydrate: dir =>
+			set(state => {
+				state.list = getNotesFromDisk(dir);
 			}),
 		setSelectedIndex: index =>
 			set(state => {
 				state.selectedIndex = index;
 			}),
-		setPreviewContent: () =>
+		setPreviewContent: dir =>
 			set(state => {
 				const selected = state?.list?.[state.selectedIndex];
 
-				if (!selected) return;
-
-				const content = getFileContent(selected.filename);
-
-				state.previewData.content = content || '';
-
 				try {
-					const metaContent = getFileMeta(selected.filename);
+					if (!selected?.filename) {
+						state.previewData.content = '';
+						return;
+					}
+
+					const content = getFileContent({dir, filename: selected.filename});
+
+					state.previewData.content = content || '';
+
+					const metaDir = state.mode === Mode.Trash ? META_TRASH_DIR : META_DIR;
+
+					const metaContent = getFileMeta({
+						dir: metaDir,
+						filename: selected.filename,
+					});
 
 					if (!metaContent) throw new Error('Not Found');
 

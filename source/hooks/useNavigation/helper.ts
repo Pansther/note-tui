@@ -1,6 +1,6 @@
 import {useInput} from 'ink';
 
-import {AvailableListKey, AvailablePreviewKey} from './type.js';
+import {AvailableListKey, AvailableTrashKey} from './type.js';
 
 export type InputHandler = Parameters<typeof useInput>[0];
 
@@ -27,28 +27,34 @@ export const getNavigationListKey = (
 		Key = AvailableListKey.Create;
 	} else if (input === 'd') {
 		Key = AvailableListKey.Archived;
+	} else if (input === 't' || key.backspace) {
+		Key = AvailableListKey.Trash;
 	}
 
 	return Key;
 };
 
-export const getNavigationPreviewKey = (
+export const getNavigationTrashKey = (
 	...[input, key]: Parameters<InputHandler>
 ) => {
-	let Key: AvailablePreviewKey | undefined = undefined;
+	let Key: AvailableTrashKey | undefined = undefined;
 
 	if (input === 'j' || key.downArrow) {
-		Key = AvailablePreviewKey.Down;
+		Key = AvailableTrashKey.Next;
 	} else if (input === 'k' || key.upArrow) {
-		Key = AvailablePreviewKey.Up;
+		Key = AvailableTrashKey.Prev;
 	} else if (input === 'g' || key.home) {
-		Key = AvailablePreviewKey.GoFirst;
+		Key = AvailableTrashKey.GoFirst;
 	} else if (input === 'G' || key.end) {
-		Key = AvailablePreviewKey.GoLast;
+		Key = AvailableTrashKey.GoLast;
 	} else if ((input === 'd' && key.ctrl) || key.pageDown) {
-		Key = AvailablePreviewKey.ScrollDown;
+		Key = AvailableTrashKey.ScrollDown;
 	} else if ((input === 'u' && key.ctrl) || key.pageUp) {
-		Key = AvailablePreviewKey.ScrollUp;
+		Key = AvailableTrashKey.ScrollUp;
+	} else if (input === 'd') {
+		Key = AvailableTrashKey.Delete;
+	} else if (input === 'r') {
+		Key = AvailableTrashKey.Restore;
 	}
 
 	return Key;

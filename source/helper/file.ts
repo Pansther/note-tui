@@ -44,8 +44,14 @@ export const saveNote = (title: string, content: string) => {
 	return filename;
 };
 
-export const getFileContent = (filename: string) => {
-	const filePath = path.join(NOTES_DIR, filename);
+export const getFileContent = ({
+	filename,
+	dir = NOTES_DIR,
+}: {
+	filename: string;
+	dir?: string;
+}) => {
+	const filePath = path.join(dir, filename);
 
 	try {
 		const content = fs.readFileSync(filePath, 'utf-8');
@@ -82,7 +88,7 @@ export const moveMetaToTrash = (filename: string) => {
 	const metaOldPath = path.join(META_DIR, metaFilename);
 	const metaNewPath = path.join(META_TRASH_DIR, metaFilename);
 
-	const fileMeta = getFileMeta(metaFilename);
+	const fileMeta = getFileMeta({filename, dir: META_DIR});
 	const metadata = JSON.parse(fileMeta || '{}') as NoteMetadata;
 
 	metadata.deletedDate = new Date().toISOString();
@@ -116,7 +122,7 @@ export const updateMeta = (filename: string) => {
 	const metaFilename = filename?.replace('.md', '.json');
 	const filePath = path.join(META_DIR, metaFilename);
 
-	const fileMeta = getFileMeta(metaFilename);
+	const fileMeta = getFileMeta({filename, dir: META_DIR});
 	const metadata = JSON.parse(fileMeta || '{}') as NoteMetadata;
 
 	metadata.updatedDate = new Date().toISOString();
@@ -126,9 +132,15 @@ export const updateMeta = (filename: string) => {
 	return filename;
 };
 
-export const getFileMeta = (filename: string) => {
+export const getFileMeta = ({
+	filename,
+	dir = META_DIR,
+}: {
+	filename: string;
+	dir?: string;
+}) => {
 	const metaFilename = filename?.replace('.md', '.json');
-	const filePath = path.join(META_DIR, metaFilename);
+	const filePath = path.join(dir, metaFilename);
 
 	try {
 		const meta = fs.readFileSync(filePath, 'utf-8');
@@ -136,5 +148,63 @@ export const getFileMeta = (filename: string) => {
 		return meta;
 	} catch (error) {
 		return null;
+	}
+};
+
+export const restoreFile = (filename: string) => {
+	const oldPath = path.join(TRASH_DIR, filename);
+	const newPath = path.join(NOTES_DIR, filename);
+
+	try {
+		if (fs.existsSync(oldPath)) {
+			fs.renameSync(oldPath, newPath);
+		}
+	} catch (error) {
+		//
+	}
+};
+
+export const restoreMeta = (filename: string) => {
+	const metaFilename = filename.replace('.md', '.json');
+	const metaOldPath = path.join(META_TRASH_DIR, metaFilename);
+	const metaNewPath = path.join(META_DIR, metaFilename);
+
+	const fileMeta = getFileMeta({filename, dir: META_TRASH_DIR});
+	const metadata = JSON.parse(fileMeta || '{}') as NoteMetadata;
+
+	metadata.deletedDate = undefined;
+
+	fs.writeFileSync(metaOldPath, JSON.stringify(metadata, null, 2), 'utf8');
+
+	try {
+		fs.renameSync(metaOldPath, metaNewPath);
+	} catch (error) {
+		//
+	}
+};
+
+export const deleteFile = ({
+	dir = TRASH_DIR,
+	filename,
+}: {
+	filename: string;
+	dir?: string;
+}) => {
+	const filepath = path.join(dir, filename);
+
+	try {
+		fs.rmSync(filepath);
+	} catch (error) {
+		//
+	}
+};
+
+export const deleteMeta = (filename: string) => {
+	const metaFilename = filename.replace('.md', '.json');
+
+	try {
+		deleteFile({dir: META_TRASH_DIR, filename: metaFilename});
+	} catch (error) {
+		//
 	}
 };

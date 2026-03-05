@@ -13,6 +13,8 @@ export enum Mode {
 	Create,
 	Edit,
 	Archived,
+	Trash,
+	Delete,
 }
 
 export interface NoteMetadata {
