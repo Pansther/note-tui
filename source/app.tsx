@@ -4,6 +4,7 @@ import {useShallow} from 'zustand/shallow';
 
 import ListPane from './components/ListPane/index.js';
 import PreviewPane from './components/PreviewPane/index.js';
+import Instruction from './components/Instruction/index.js';
 
 import useStore from './store/index.js';
 import useDimension from './hooks/useDimension.js';
@@ -20,22 +21,32 @@ const App = () => {
 	const {dimensions} = useDimension();
 
 	return (
-		<Box width={dimensions.width} height={dimensions.height}>
-			<Box
-				width="30%"
-				borderStyle="round"
-				flexDirection="column"
-				borderColor={cx({green: focusPane === FocusPane.List})}
-			>
-				<ListPane />
+		<Box
+			flexDirection="column"
+			width={dimensions.width}
+			height={dimensions.height}
+		>
+			<Box>
+				<Box
+					width="30%"
+					borderStyle="round"
+					flexDirection="column"
+					borderColor={cx({green: focusPane === FocusPane.List})}
+				>
+					<ListPane />
+				</Box>
+				<Box
+					width="70%"
+					borderStyle="round"
+					flexDirection="column"
+					borderColor={cx({red: focusPane === FocusPane.Preview})}
+				>
+					<PreviewPane />
+				</Box>
 			</Box>
-			<Box
-				width="70%"
-				borderStyle="round"
-				flexDirection="column"
-				borderColor={cx({red: focusPane === FocusPane.Preview})}
-			>
-				<PreviewPane />
+
+			<Box width="100%">
+				<Instruction />
 			</Box>
 		</Box>
 	);

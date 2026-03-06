@@ -259,13 +259,14 @@ const useNavigation = () => {
 			case Mode.Trash: {
 				navigatePane(input, key);
 
-				if (focusPane === FocusPane.List) {
-					if (input === 'q' || key.escape) {
-						setMode(Mode.Idle);
-						setSelectedIndex(0);
-						reHydrate();
-					}
+				if (input === 'q' || key.escape) {
+					setMode(Mode.Idle);
+					setSelectedIndex(0);
+					setFocusPane(FocusPane.List);
+					reHydrate();
+				}
 
+				if (focusPane === FocusPane.List) {
 					navigateTrashView(input, key);
 				}
 

@@ -4,7 +4,7 @@ export interface ListItem {
 }
 
 export enum FocusPane {
-	List,
+	List = 1,
 	Preview,
 }
 
