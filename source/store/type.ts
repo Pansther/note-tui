@@ -15,6 +15,7 @@ export enum Mode {
 	Archived,
 	Trash,
 	Delete,
+	Search,
 }
 
 export interface NoteMetadata {

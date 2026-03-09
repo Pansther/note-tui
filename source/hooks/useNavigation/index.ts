@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useEffectEvent, useRef, useState} from 'react';
 import dayjs from 'dayjs';
 import {useInput} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -16,6 +16,8 @@ import {
 	restoreMeta,
 	moveFileToTrash,
 	moveMetaToTrash,
+	getNotesFromDisk,
+	NOTES_DIR,
 } from '../../helper/file.js';
 import {
 	InputHandler,
@@ -23,6 +25,7 @@ import {
 	getNavigationTrashKey,
 } from './helper.js';
 import {openEditor} from '../../helper/editor.js';
+import {filterNotes} from '../../helper/search.js';
 import {formatDateTime} from '../../helper/date.js';
 
 import {FocusPane, Mode} from '../../store/type.js';
@@ -33,22 +36,26 @@ const useNavigation = () => {
 		mode,
 		list,
 		focusPane,
+		searchKeyword,
 		selectedIndex,
 		next,
 		prev,
 		create,
 		goLast,
 		goFirst,
+		setList,
 		setMode,
 		reHydrate,
 		setFocusPane,
 		calculateIndex,
 		setSelectedIndex,
+		setSearchKeyword,
 	} = useStore(
 		useShallow(s => ({
 			mode: s.mode,
 			list: s.list,
 			focusPane: s.focusPane,
+			searchKeyword: s.searchKeyword,
 			selectedIndex: s.selectedIndex,
 			next: s.next,
 			prev: s.prev,
@@ -60,11 +67,21 @@ const useNavigation = () => {
 			reHydrate: s.reHydrate,
 			setFocusPane: s.setFocusPane,
 			calculateIndex: s.calculateIndex,
+			setSearchKeyword: s.setSearchKeyword,
 			setSelectedIndex: s.setSelectedIndex,
 		})),
 	);
 
+	const prevModeRef = useRef(Mode.Idle);
+	const searchDirRef = useRef(NOTES_DIR);
+
 	const [fileLabel, setFileLabel] = useState<string>();
+
+	const onFilterNotes = useEffectEvent((searchKeyword = '') => {
+		const notes = getNotesFromDisk(searchDirRef.current);
+
+		setList(filterNotes(notes, searchKeyword));
+	});
 
 	const cancelCreate = () => {
 		setFileLabel(undefined);
@@ -137,6 +154,14 @@ const useNavigation = () => {
 				setMode(Mode.Trash);
 				setSelectedIndex(0);
 				reHydrate(TRASH_DIR);
+
+				break;
+			}
+
+			case AvailableListKey.Search: {
+				setMode(Mode.Search);
+				searchDirRef.current = NOTES_DIR;
+				prevModeRef.current = Mode.Idle;
 
 				break;
 			}
@@ -270,6 +295,12 @@ const useNavigation = () => {
 					navigateTrashView(input, key);
 				}
 
+				if (input === 's' || input === '/') {
+					setMode(Mode.Search);
+					searchDirRef.current = TRASH_DIR;
+					prevModeRef.current = Mode.Trash;
+				}
+
 				break;
 			}
 
@@ -293,6 +324,26 @@ const useNavigation = () => {
 				break;
 			}
 
+			case Mode.Search: {
+				if (input === 'u' && key.ctrl) {
+					setSearchKeyword(undefined);
+				}
+
+				if (key.upArrow) {
+					prev();
+				}
+
+				if (key.downArrow) {
+					next();
+				}
+
+				if (key.return || key.escape) {
+					setMode(prevModeRef.current);
+				}
+
+				break;
+			}
+
 			case Mode.Idle:
 			default: {
 				navigatePane(input, key);
@@ -308,9 +359,15 @@ const useNavigation = () => {
 		}
 	});
 
+	useEffect(() => {
+		onFilterNotes(searchKeyword);
+	}, [searchKeyword]);
+
 	return {
 		fileLabel,
+		searchKeyword,
 		setFileLabel,
+		setSearchKeyword,
 	};
 };
 

@@ -29,6 +29,8 @@ export const getNavigationListKey = (
 		Key = AvailableListKey.Archived;
 	} else if (input === 't' || key.backspace) {
 		Key = AvailableListKey.Trash;
+	} else if (input === 's' || input === '/') {
+		Key = AvailableListKey.Search;
 	}
 
 	return Key;

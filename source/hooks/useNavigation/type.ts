@@ -9,6 +9,7 @@ export enum AvailableListKey {
 	Create = 'n',
 	Archived = 'd',
 	Trash = 't',
+	Search = 's',
 }
 
 export enum AvailableTrashKey {

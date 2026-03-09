@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import cx from 'clsx';
 import {Box, Text} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -21,16 +21,37 @@ const ListPane = () => {
 			previewData: s.previewData,
 		})),
 	);
-	const {fileLabel = '', setFileLabel} = useNavigation();
+	const {
+		fileLabel = '',
+		searchKeyword = '',
+		setFileLabel,
+		setSearchKeyword,
+	} = useNavigation();
 
 	const listRef = useRef<ScrollListRef>(null);
 
 	const isCreatingFile = mode === Mode.Create;
 	const isArchivedFile = mode === Mode.Archived;
 	const isDeletingFile = mode === Mode.Delete;
+	const isSearch = mode === Mode.Search;
 
 	return (
 		<>
+			{(isSearch ? searchKeyword !== undefined : searchKeyword) && (
+				<Box gap={1} borderColor="red" borderStyle="single" height={3}>
+					<Text>&#128269;</Text>
+					{isSearch ? (
+						<TextInput
+							value={searchKeyword}
+							placeholder="Search Note ..."
+							onChange={setSearchKeyword}
+						/>
+					) : (
+						<Text>{searchKeyword}</Text>
+					)}
+				</Box>
+			)}
+
 			<ScrollList
 				ref={listRef}
 				selectedIndex={selectedIndex}

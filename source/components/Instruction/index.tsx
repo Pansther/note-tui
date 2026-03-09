@@ -8,7 +8,7 @@ const Instruction = () => {
 	const mode = useStore(s => s.mode);
 	const pane = useStore(s => s.focusPane);
 
-	const keys = KEY_INSTRUCTION[mode];
+	const keys = KEY_INSTRUCTION[mode] ?? [];
 
 	return (
 		<Box
@@ -19,8 +19,8 @@ const Instruction = () => {
 			justifyContent="flex-start"
 		>
 			{keys
-				.filter(({focusPane}) => (!focusPane ? true : focusPane === pane))
-				.map(({key, label}, i) => (
+				?.filter(({focusPane}) => (!focusPane ? true : focusPane === pane))
+				?.map(({key, label}, i) => (
 					<Text key={i} color="gray">
 						{key}: {label}
 						{i === keys.length - 1 ? '' : ','}{' '}

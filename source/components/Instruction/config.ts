@@ -6,7 +6,7 @@ interface KeyItem {
 	focusPane?: FocusPane;
 }
 
-const {Idle, Create, Edit, Archived, Trash, Delete} = Mode;
+const {Idle, Create, Edit, Archived, Trash, Delete, Search} = Mode;
 
 export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 	[Idle]: [
@@ -54,6 +54,11 @@ export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 		{
 			key: 'n',
 			label: 'create note',
+			focusPane: FocusPane.List,
+		},
+		{
+			key: 's/(/)',
+			label: 'search',
 			focusPane: FocusPane.List,
 		},
 		{
@@ -136,6 +141,24 @@ export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 		{
 			key: 'n/esc',
 			label: 'cancel',
+		},
+	],
+	[Search]: [
+		{
+			key: '↓',
+			label: 'down',
+		},
+		{
+			key: '↑',
+			label: 'up',
+		},
+		{
+			key: '<C-u>',
+			label: 'clear',
+		},
+		{
+			key: 'return/esc',
+			label: 'unfocus search',
 		},
 	],
 };

@@ -8,6 +8,7 @@ import {
 	getFileContent,
 	getNotesFromDisk,
 } from '../helper/file.js';
+import {filterNotes} from '../helper/search.js';
 
 import {FocusPane, ListItem, Mode, NoteMetadata} from './type.js';
 
@@ -20,6 +21,7 @@ interface Store {
 		meta: NoteMetadata;
 	};
 	list: ListItem[];
+	searchKeyword?: string;
 	next: () => void;
 	prev: () => void;
 	goFirst: () => void;
@@ -33,6 +35,7 @@ interface Store {
 	setMode: (mode: Mode) => void;
 	setList: (list: ListItem[]) => void;
 	restore: () => void;
+	setSearchKeyword: (keyword?: string) => void;
 }
 
 const useStore = create(
@@ -45,6 +48,7 @@ const useStore = create(
 		},
 		focusPane: FocusPane.List,
 		list: getNotesFromDisk(),
+		searchKeyword: undefined,
 		setList: list =>
 			set(state => {
 				state.list = list;
@@ -101,7 +105,7 @@ const useStore = create(
 			}),
 		reHydrate: dir =>
 			set(state => {
-				state.list = getNotesFromDisk(dir);
+				state.list = filterNotes(getNotesFromDisk(dir), state.searchKeyword);
 			}),
 		setSelectedIndex: index =>
 			set(state => {
@@ -148,6 +152,10 @@ const useStore = create(
 		setMode: mode =>
 			set(state => {
 				state.mode = mode;
+			}),
+		setSearchKeyword: keyword =>
+			set(state => {
+				state.searchKeyword = keyword;
 			}),
 	})),
 );
