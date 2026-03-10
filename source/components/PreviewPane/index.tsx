@@ -7,6 +7,7 @@ import {Box, Spacer, Text, useStdout} from 'ink';
 import {ScrollView, ScrollViewRef} from 'ink-scroll-view';
 
 import useStore from '../../store/index.js';
+import useTheme from '../../theme/index.js';
 import useDimension from '../../hooks/useDimension.js';
 import usePreviewNavigation from '../../hooks/usePreviewNavigation/index.js';
 
@@ -22,7 +23,7 @@ marked.setOptions({
 
 const PreviewPane = () => {
 	const {stdout} = useStdout();
-	const {mode, selectedIndex, previewData} = useStore(
+	const {selectedIndex, previewData} = useStore(
 		useShallow(s => ({
 			list: s.list,
 			mode: s.mode,
@@ -35,6 +36,8 @@ const PreviewPane = () => {
 	const viewRef = useRef<ScrollViewRef>(null);
 
 	const {dimensions} = useDimension();
+	const {textColor, accentColor, foregroundColor, secondaryColor, errorColor} =
+		useTheme(s => s.themeConfig);
 
 	usePreviewNavigation({viewRef});
 
@@ -56,8 +59,8 @@ const PreviewPane = () => {
 
 	return (
 		<>
-			<ScrollView width="100%" ref={viewRef} height={dimensions.height - 4}>
-				<Text wrap="wrap">
+			<ScrollView width="100%" ref={viewRef} height={dimensions.height - 5}>
+				<Text wrap="wrap" color={textColor}>
 					{marked.parse(previewData?.content, {
 						async: false,
 					})}
@@ -67,21 +70,46 @@ const PreviewPane = () => {
 			<Spacer />
 
 			{previewData?.content && (
-				<Box width="100%" gap={1} backgroundColor="gray">
-					<Text wrap="wrap">
-						{' '}
-						Created: {formatDateTime(previewData.meta?.createdDate) || '-'}
-					</Text>
+				<Box width="100%" gap={1}>
+					<Box marginLeft={1}>
+						<Text
+							wrap="wrap"
+							color={accentColor}
+							backgroundColor={foregroundColor}
+						>
+							{' '}
+							Created{' '}
+						</Text>
+						<Text wrap="wrap" color={textColor}>
+							{' '}
+							{formatDateTime(previewData.meta?.createdDate) || '-'}
+						</Text>
+					</Box>
 					<Text>|</Text>
-					<Text wrap="wrap">
-						Updated: {formatDateTime(previewData.meta?.updatedDate) || '-'}
+					<Text
+						wrap="wrap"
+						color={secondaryColor}
+						backgroundColor={foregroundColor}
+					>
+						{' '}
+						Updated{' '}
+					</Text>
+					<Text wrap="wrap" color={textColor}>
+						{formatDateTime(previewData.meta?.updatedDate) || '-'}
 					</Text>
 
 					{previewData?.meta?.deletedDate && (
 						<>
 							<Text>|</Text>
-							<Text wrap="wrap">
-								Deleted:{' '}
+							<Text
+								wrap="wrap"
+								color={errorColor}
+								backgroundColor={foregroundColor}
+							>
+								{' '}
+								Deleted{' '}
+							</Text>
+							<Text wrap="wrap" color={textColor}>
 								{formatDateTime(previewData.meta?.deletedDate || '') || '-'}
 							</Text>
 						</>

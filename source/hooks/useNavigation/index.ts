@@ -1,4 +1,4 @@
-import {useEffect, useEffectEvent, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import dayjs from 'dayjs';
 import {useInput} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -77,11 +77,11 @@ const useNavigation = () => {
 
 	const [fileLabel, setFileLabel] = useState<string>();
 
-	const onFilterNotes = useEffectEvent((searchKeyword = '') => {
+	const onFilterNotes = (searchKeyword = '') => {
 		const notes = getNotesFromDisk(searchDirRef.current);
 
 		setList(filterNotes(notes, searchKeyword));
-	});
+	};
 
 	const cancelCreate = () => {
 		setFileLabel(undefined);

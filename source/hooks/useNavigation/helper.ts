@@ -57,6 +57,8 @@ export const getNavigationTrashKey = (
 		Key = AvailableTrashKey.Delete;
 	} else if (input === 'r') {
 		Key = AvailableTrashKey.Restore;
+	} else if (input === 's') {
+		Key = AvailableTrashKey.Search;
 	}
 
 	return Key;

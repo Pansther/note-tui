@@ -129,6 +129,11 @@ export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 			focusPane: FocusPane.List,
 		},
 		{
+			key: 's/(/)',
+			label: 'search',
+			focusPane: FocusPane.List,
+		},
+		{
 			key: 'q/esc',
 			label: 'back to note',
 		},

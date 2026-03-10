@@ -21,6 +21,7 @@ export enum AvailableTrashKey {
 	ScrollUp = '<C-u>',
 	Restore = 'r',
 	Delete = 'd',
+	Search = 's',
 }
 
 export enum AvailablePreviewKey {

@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useRef} from 'react';
 import cx from 'clsx';
 import {Box, Text} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -7,6 +7,7 @@ import {ScrollList, ScrollListRef} from 'ink-scroll-list';
 import TextInput from 'ink-text-input';
 
 import useStore from '../../store/index.js';
+import useTheme from '../../theme/index.js';
 import useNavigation from '../../hooks/useNavigation/index.js';
 
 import {Mode} from '../../store/type.js';
@@ -16,7 +17,7 @@ const ListPane = () => {
 		useShallow(s => ({
 			list: s.list,
 			mode: s.mode,
-			focusPane: s.focusPane,
+			ColorfocusPane: s.focusPane,
 			selectedIndex: s.selectedIndex,
 			previewData: s.previewData,
 		})),
@@ -28,6 +29,10 @@ const ListPane = () => {
 		setSearchKeyword,
 	} = useNavigation();
 
+	const {accentColor, textColor, borderColor, foregroundColor} = useTheme(
+		s => s.themeConfig,
+	);
+
 	const listRef = useRef<ScrollListRef>(null);
 
 	const isCreatingFile = mode === Mode.Create;
@@ -38,7 +43,7 @@ const ListPane = () => {
 	return (
 		<>
 			{(isSearch ? searchKeyword !== undefined : searchKeyword) && (
-				<Box gap={1} borderColor="red" borderStyle="single" height={3}>
+				<Box gap={1} borderColor={borderColor} borderStyle="single" height={3}>
 					<Text>&#128269;</Text>
 					{isSearch ? (
 						<TextInput
@@ -47,7 +52,7 @@ const ListPane = () => {
 							onChange={setSearchKeyword}
 						/>
 					) : (
-						<Text>{searchKeyword}</Text>
+						<Text color={accentColor}>{searchKeyword}</Text>
 					)}
 				</Box>
 			)}
@@ -70,14 +75,18 @@ const ListPane = () => {
 					return (
 						<Box key={filename}>
 							<Box
+								gap={1}
 								width="100%"
 								backgroundColor={cx({
-									red: isSelected && !isCreatingFile,
+									[foregroundColor]: isSelected && !isCreatingFile,
 								})}
 							>
-								<Text wrap="truncate">
+								<Text wrap="truncate" color={accentColor}>
 									{' '}
-									{i + 1}. {fileLabel}
+									{i + 1}.
+								</Text>
+								<Text wrap="truncate" color={textColor}>
+									{fileLabel}
 								</Text>
 								<Text> </Text>
 							</Box>
@@ -87,8 +96,8 @@ const ListPane = () => {
 			</ScrollList>
 
 			{isCreatingFile && (
-				<Box width="100%" backgroundColor="red" overflow="hidden">
-					<Text> {list?.length + 1}. </Text>
+				<Box width="100%" backgroundColor={foregroundColor} overflow="hidden">
+					<Text color={accentColor}> {list?.length + 1}. </Text>
 					<TextInput
 						value={fileLabel}
 						placeholder="New Note"
