@@ -72,6 +72,11 @@ export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 			focusPane: FocusPane.List,
 		},
 		{
+			key: '</>',
+			label: 'change theme',
+			focusPane: FocusPane.List,
+		},
+		{
 			key: 'q/<C-c>',
 			label: 'exit',
 		},

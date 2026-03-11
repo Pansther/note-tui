@@ -30,6 +30,7 @@ import {formatDateTime} from '../../helper/date.js';
 
 import {FocusPane, Mode} from '../../store/type.js';
 import {AvailableListKey, AvailableTrashKey} from './type.js';
+import useTheme from '../../theme/index.js';
 
 const useNavigation = () => {
 	const {
@@ -71,6 +72,8 @@ const useNavigation = () => {
 			setSelectedIndex: s.setSelectedIndex,
 		})),
 	);
+
+	const changeTheme = useTheme(s => s.changeTheme);
 
 	const prevModeRef = useRef(Mode.Idle);
 	const searchDirRef = useRef(NOTES_DIR);
@@ -162,6 +165,18 @@ const useNavigation = () => {
 				setMode(Mode.Search);
 				searchDirRef.current = NOTES_DIR;
 				prevModeRef.current = Mode.Idle;
+
+				break;
+			}
+
+			case AvailableListKey.NextTheme: {
+				changeTheme(1);
+
+				break;
+			}
+
+			case AvailableListKey.PrevTheme: {
+				changeTheme(-1);
 
 				break;
 			}

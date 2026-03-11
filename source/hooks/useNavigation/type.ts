@@ -10,6 +10,8 @@ export enum AvailableListKey {
 	Archived = 'd',
 	Trash = 't',
 	Search = 's',
+	NextTheme = '>',
+	PrevTheme = '<',
 }
 
 export enum AvailableTrashKey {

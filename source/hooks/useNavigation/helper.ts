@@ -31,6 +31,10 @@ export const getNavigationListKey = (
 		Key = AvailableListKey.Trash;
 	} else if (input === 's' || input === '/') {
 		Key = AvailableListKey.Search;
+	} else if (input === '>') {
+		Key = AvailableListKey.NextTheme;
+	} else if (input === '<') {
+		Key = AvailableListKey.PrevTheme;
 	}
 
 	return Key;

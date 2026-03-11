@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import cx from 'clsx';
 import {Box, Text} from 'ink';
 import {useShallow} from 'zustand/shallow';
@@ -11,6 +11,7 @@ import useTheme from '../../theme/index.js';
 import useNavigation from '../../hooks/useNavigation/index.js';
 
 import {Mode} from '../../store/type.js';
+import {AvailableTheme} from '../../theme/type.js';
 
 const ListPane = () => {
 	const {mode, list, selectedIndex} = useStore(
@@ -29,16 +30,31 @@ const ListPane = () => {
 		setSearchKeyword,
 	} = useNavigation();
 
+	const theme = useTheme(s => s.theme);
 	const {accentColor, textColor, borderColor, foregroundColor} = useTheme(
 		s => s.themeConfig,
 	);
 
 	const listRef = useRef<ScrollListRef>(null);
+	const [isShowThemeNoti, setShowThemeNoti] = useState(false);
 
 	const isCreatingFile = mode === Mode.Create;
 	const isArchivedFile = mode === Mode.Archived;
 	const isDeletingFile = mode === Mode.Delete;
+	const isTrash = mode === Mode.Trash;
 	const isSearch = mode === Mode.Search;
+
+	useEffect(() => {
+		setShowThemeNoti(true);
+
+		const timeout = setTimeout(() => {
+			setShowThemeNoti(undefined);
+		}, 3_000);
+
+		return () => {
+			clearTimeout(timeout);
+		};
+	}, [theme]);
 
 	return (
 		<>
@@ -54,6 +70,15 @@ const ListPane = () => {
 					) : (
 						<Text color={accentColor}>{searchKeyword}</Text>
 					)}
+				</Box>
+			)}
+
+			{isTrash && (
+				<Box marginBottom={1}>
+					<Text color={accentColor} backgroundColor={foregroundColor}>
+						{' '}
+						Trash{' '}
+					</Text>
 				</Box>
 			)}
 
@@ -103,6 +128,16 @@ const ListPane = () => {
 						placeholder="New Note"
 						onChange={setFileLabel}
 					/>
+				</Box>
+			)}
+
+			{isShowThemeNoti && !isCreatingFile && (
+				<Box width="100%" overflow="hidden">
+					<Text color={accentColor} backgroundColor={foregroundColor}>
+						{' '}
+						Theme #{theme}{' '}
+					</Text>
+					<Text color={accentColor}> {AvailableTheme[theme]}</Text>
 				</Box>
 			)}
 		</>
