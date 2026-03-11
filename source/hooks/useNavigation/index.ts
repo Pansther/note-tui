@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import {useInput} from 'ink';
 import {useShallow} from 'zustand/shallow';
 
+import useTheme from '../../theme/index.js';
 import useStore from '../../store/index.js';
 
 import {
@@ -30,7 +31,6 @@ import {formatDateTime} from '../../helper/date.js';
 
 import {FocusPane, Mode} from '../../store/type.js';
 import {AvailableListKey, AvailableTrashKey} from './type.js';
-import useTheme from '../../theme/index.js';
 
 const useNavigation = () => {
 	const {

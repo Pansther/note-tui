@@ -48,7 +48,7 @@ const ListPane = () => {
 		setShowThemeNoti(true);
 
 		const timeout = setTimeout(() => {
-			setShowThemeNoti(undefined);
+			setShowThemeNoti(false);
 		}, 3_000);
 
 		return () => {

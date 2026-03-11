@@ -6,8 +6,8 @@ import {themes} from './config.js';
 import {AvailableTheme, ThemeConfig} from './type.js';
 import {getTheme, saveTheme} from '../helper/theme.js';
 
-const DEFAULT_THEME = AvailableTheme.Catppuccin;
-const ALL_THEMES = Object.values(AvailableTheme).map(Number);
+export const DEFAULT_THEME = AvailableTheme.Catppuccin;
+const ALL_THEMES = Object.values(AvailableTheme).map(v => Number(v));
 
 interface Store {
 	theme: AvailableTheme;
@@ -32,10 +32,10 @@ const useTheme = create<Store>()(
 		changeTheme: (amount = 1) => {
 			const nextTheme = get().theme + amount;
 
-			if (nextTheme > ALL_THEMES.at(-1)) {
+			if (nextTheme > ALL_THEMES[ALL_THEMES.length - 1]!) {
 				get().setTheme(DEFAULT_THEME);
 			} else if (nextTheme < DEFAULT_THEME) {
-				get().setTheme(ALL_THEMES.at(-1));
+				get().setTheme(ALL_THEMES[ALL_THEMES.length - 1]!);
 			} else {
 				get().setTheme(nextTheme);
 			}

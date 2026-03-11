@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import {NOTES_DIR} from './file.js';
+import {DEFAULT_THEME} from '../theme/index.js';
 
 import {AvailableTheme} from '../theme/type.js';
 
@@ -23,6 +24,6 @@ export const getTheme = (): {theme: AvailableTheme} => {
 
 		return config;
 	} catch (error) {
-		return {theme: undefined};
+		return {theme: DEFAULT_THEME};
 	}
 };
