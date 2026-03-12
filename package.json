@@ -2,19 +2,15 @@
 	"name": "note-tui",
 	"version": "0.0.0",
 	"license": "MIT",
-	"bin": "dist/cli.js",
 	"type": "module",
 	"engines": {
 		"node": ">=20"
 	},
 	"scripts": {
 		"dev": "bun --watch source/cli.tsx",
-		"build:binary": "bun build dist/cli.js --compile --outfile releases/note-tui-linux-x64 --target bun-linux-x64 && bun build dist/cli.js --compile --outfile releases/note-tui-darwin-x64 --target bun-darwin-x64 && bun build dist/cli.js --compile --outfile releases/note-tui-darwin-arm64 --target bun-darwin-arm64",
+		"build:binary": "rm -rf releases && mkdir releases && bun build ./source/cli.tsx --compile --minify --target bun-linux-x64 --outfile releases/note-tui-linux-x64 && bun build ./source/cli.tsx --compile --minify --target bun-darwin-x64 --outfile releases/note-tui-darwin-x64 && bun build ./source/cli.tsx --compile --minify --target bun-darwin-arm64 --outfile releases/note-tui-darwin-arm64",
 		"compress:binary": "tar -czvf releases/note-tui-linux-x64.tar.gz -C releases note-tui-linux-x64 && tar -czvf releases/note-tui-darwin-x64.tar.gz -C releases note-tui-darwin-x64 && tar -czvf releases/note-tui-darwin-arm64.tar.gz -C releases note-tui-darwin-arm64"
 	},
-	"files": [
-		"dist"
-	],
 	"dependencies": {
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.19",

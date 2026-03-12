@@ -18,9 +18,11 @@ const getAvailableEditor = () => {
 	}
 };
 
-export const openEditor = (filename = '') => {
+export const openEditor = async (filename = '') => {
 	const editor = getAvailableEditor();
 	const filePath = path.join(NOTES_DIR, filename);
+
+	await new Promise(resolve => setTimeout(resolve, 50));
 
 	spawnSync(editor, [filePath], {stdio: 'inherit'});
 

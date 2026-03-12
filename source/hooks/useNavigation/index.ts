@@ -91,7 +91,7 @@ const useNavigation = () => {
 		setMode(Mode.Idle);
 	};
 
-	const navigateListView: InputHandler = (input, key) => {
+	const navigateListView: InputHandler = async (input, key) => {
 		const Key = getNavigationListKey(input, key);
 
 		switch (Key) {
@@ -131,7 +131,7 @@ const useNavigation = () => {
 				const {filename} = list[selectedIndex];
 
 				setMode(Mode.Edit);
-				openEditor(filename);
+				await openEditor(filename);
 
 				reHydrate();
 				setMode(Mode.Idle);
