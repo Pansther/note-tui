@@ -5,14 +5,15 @@
 	"bin": "dist/cli.js",
 	"type": "module",
 	"engines": {
-		"node": ">=16"
+		"node": ">=20"
 	},
 	"scripts": {
 		"build": "tsc",
 		"build:dev": "tsc --noResolve --noCheck",
-		"dev": "yarn tsx watch source/cli.tsx",
-		"start": "yarn tsx source/cli.tsx",
-		"test": "prettier --check . && xo && ava"
+		"dev": "bun tsx watch source/cli.tsx",
+		"start": "bun tsx source/cli.tsx",
+		"test": "prettier --check . && xo && ava",
+		"build:binary": "bun build dist/cli.js --compile --outfile releases/note-tui-linux-x64 --target bun-linux-x64 && bun build dist/cli.js --compile --outfile releases/note-tui-darwin-x64 --target bun-darwin-x64 && bun build dist/cli.js --compile --outfile releases/note-tui-darwin-arm64 --target bun-darwin-arm64"
 	},
 	"files": [
 		"dist"
@@ -31,6 +32,7 @@
 		"meow": "^11.0.0",
 		"nanoid": "^5.1.6",
 		"react": "^19.2.4",
+		"react-devtools-core": "^7.0.1",
 		"tsx": "^4.21.0",
 		"zustand": "^5.0.11"
 	},

@@ -11,22 +11,23 @@ A terminal user interface (TUI) application for managing notes. `note-tui` provi
 
 ## Installation
 
-To install `note-tui`, make sure you have Node.js (version 16 or higher) and Yarn installed.
+Download pre-built binaries for your platform from the [Releases](https://github.com/Pansther/note-tui/releases) page.
 
-```bash
-git clone https://github.com/your-username/note-tui.git # Replace with actual repo URL
-cd note-tui
-yarn install
-yarn build
-```
+### From Source
 
-## Usage
+To start the `note-tui` application directly from the source code, make sure you have Bun (version 1.x or higher) installed.
 
-To start the `note-tui` application, run:
+1. Install dependencies:
 
-```bash
-yarn start
-```
+   ```bash
+   bun install
+   ```
+
+2. Run the application:
+
+   ```bash
+   bun start
+   ```
 
 ## Keybindings
 
@@ -34,39 +35,39 @@ yarn start
 
 ### Idle Mode
 
-| Key     | Description     |
-| :------ | :-------------- |
-| ↓/j     | down            |
-| ↑/k     | up              |
-| ←/h     | focus note      |
-| →/l     | focus preview   |
-| tab     | toggle focus    |
-| <C-d>   | scroll down     |
-| <C-u>   | scroll up       |
-| g       | go top          |
-| G       | go bottom       |
-| e/enter | edit            |
-| n       | create note     |
-| s/(/)   | search          |
-| d       | archived        |
-| t       | open trash view |
-| </>     | change theme    |
-| q/<C-c> | exit            |
+| Key      | Description     |
+| :------- | :-------------- |
+| ↓,j      | down            |
+| ↑,k      | up              |
+| ←,h      | focus note      |
+| →,l      | focus preview   |
+| tab      | toggle focus    |
+| ctrl+d   | scroll down     |
+| ctrl+u   | scroll up       |
+| g        | go top          |
+| G        | go bottom       |
+| e,enter  | edit            |
+| n        | create note     |
+| s,/      | search          |
+| d        | archived        |
+| t        | open trash view |
+| <,>      | change theme    |
+| q,ctrl+c | exit            |
 
 ### Trash Mode
 
-| Key   | Description  |
-| :---- | :----------- |
-| ↓/j   | down         |
-| ↑/k   | up           |
-| <C-d> | scroll down  |
-| <C-u> | scroll up    |
-| g     | go top       |
-| G     | go bottom    |
-| r     | restore note |
-| d     | delete note  |
-| s/(/) | search       |
-| q/esc | back to note |
+| Key    | Description  |
+| :----- | :----------- |
+| ↓,j    | down         |
+| ↑,k    | up           |
+| ctrl+d | scroll down  |
+| ctrl+u | scroll up    |
+| g      | go top       |
+| G      | go bottom    |
+| r      | restore note |
+| d      | delete note  |
+| s,/    | search       |
+| q,esc  | back to note |
 
 ### Search Mode
 
@@ -74,10 +75,10 @@ yarn start
 | :--------- | :------------- |
 | ↓          | down           |
 | ↑          | up             |
-| <C-u>      | clear          |
-| return/esc | unfocus search |
-| q/Ctrl + c | exit           |
+| ctrl+u     | clear          |
+| return,esc | unfocus search |
+| q,ctrl+c   | exit           |
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
