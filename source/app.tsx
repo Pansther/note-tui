@@ -11,17 +11,20 @@ import useStore from './store/index.js';
 import useTheme from './theme/index.js';
 import useDimension from './hooks/useDimension.js';
 
-import {FocusPane} from './store/type.js';
+import {FocusPane, Mode} from './store/type.js';
 
 const App = () => {
-	const {focusPane} = useStore(
+	const {mode, focusPane} = useStore(
 		useShallow(s => ({
+			mode: s.mode,
 			focusPane: s.focusPane,
 		})),
 	);
 
 	const {dimensions} = useDimension();
 	const {accentColor, backgroundColor} = useTheme(s => s.themeConfig);
+
+	const isEditing = mode === Mode.Edit;
 
 	useEffect(() => {
 		process.stdout.write(`\x1b]11;${backgroundColor}\x07`);
@@ -38,6 +41,8 @@ const App = () => {
 			process.stdout.write('\x1b[?1049l');
 		};
 	}, []);
+
+	if (isEditing) return null;
 
 	return (
 		<Box
