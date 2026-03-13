@@ -84,7 +84,11 @@ export const KEY_INSTRUCTION: Record<Mode, KeyItem[]> = {
 	[Create]: [
 		{
 			key: 'enter',
-			label: 'confirm create',
+			label: 'confirm',
+		},
+		{
+			key: 'esc',
+			label: 'cancel',
 		},
 	],
 	[Edit]: [],

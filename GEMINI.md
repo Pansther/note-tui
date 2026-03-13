@@ -4,66 +4,78 @@
 
 ## Technologies Used
 
-*   **Frontend:** React (rendered in the terminal using [Ink](https://www.npmjs.com/package/ink))
-*   **Language:** TypeScript
-*   **State Management:** [Zustand](https://zustand-bear.github.io/blog/)
-*   **Markdown Rendering:** `marked` and `marked-terminal`
-*   **Utilities:** `dayjs` (date handling), `fuse.js` (fuzzy searching)
-*   **Linting/Formatting:** `xo`, `prettier`
-*   **Testing:** `ava`
+- **Runtime:** [Bun](https://bun.sh/) (used for development and building)
+- **Frontend:** React (rendered in the terminal using [Ink 6](https://www.npmjs.com/package/ink))
+- **Language:** TypeScript
+- **State Management:** [Zustand](https://zustand-bear.github.io/blog/) (with `immer` middleware)
+- **Markdown Rendering:** `marked` and `marked-terminal`
+- **TUI Components:** `ink-scroll-list`, `ink-scroll-view`, `ink-text-input`
+- **Utilities:** `dayjs` (date handling), `fuse.js` (fuzzy searching), `clsx` (class name merging), `nanoid`
+- **Linting/Formatting:** `xo`, `prettier`
+- **Testing:** `ava`
 
 ## Architecture
 
 The application follows a component-based architecture:
 
-*   **`source/cli.tsx`**: The entry point, which renders the main `App` component using Ink.
-*   **`source/app.tsx`**: The main application component, responsible for the overall layout (list pane, preview pane, instruction area) and global terminal effects.
-*   **`source/components/`**: Contains various UI components like `ListPane`, `PreviewPane`, and `Instruction`.
-*   **`source/hooks/`**: Custom React hooks for managing specific application logic, such as `useNavigation` (handling keybindings and application flow), `useDimension`, `useDebounce`, and `usePreviewNavigation`.
-*   **`source/store/index.ts`**: Implements global state management using Zustand, holding data like the notes list, selected note, preview content, focus state, and application mode.
-*   **`source/helper/`**: Utility functions for file operations (`file.ts`), opening external editors (`editor.ts`), searching (`search.ts`), date formatting (`date.ts`), and theme management (`theme.ts`).
-*   **`source/theme/`**: Manages the application's theming system, defining various color schemes.
+- **`source/cli.tsx`**: The entry point, which renders the main `App` component using Ink and handles terminal cleanup on exit.
+- **`source/app.tsx`**: The main application component, responsible for the overall layout (list pane, preview pane, instruction area) and managing terminal-specific escape sequences (alternate screen, mouse tracking).
+- **`source/components/`**:
+  - `ListPane`: Renders the list of notes with scroll support.
+  - `PreviewPane`: Renders the Markdown content of the selected note.
+  - `Instruction`: Displays available keybindings based on the current mode.
+- **`source/hooks/`**:
+  - `useNavigation`: Handles global keybindings and application mode transitions.
+  - `usePreviewNavigation`: Manages scrolling and navigation within the preview pane.
+  - `useDimension`: Tracks terminal window dimensions.
+  - `useDebounce`: Utility for debouncing values (e.g., search input).
+- **`source/store/`**: Global state management using Zustand, partitioned into:
+  - `index.ts`: Main store for notes, selection, and application mode.
+  - `type.ts`: TypeScript definitions for store state and actions.
+- **`source/helper/`**:
+  - `file.ts`: Core logic for file system operations (CRUD for notes and metadata in `~/.notes`).
+  - `editor.ts`: Logic for spawning external editors (nvim, vim, vi) to edit notes.
+  - `search.ts`: Fuzzy search implementation using `fuse.js`.
+  - `theme.ts`: Persistent theme storage and retrieval.
+- **`source/theme/`**: Manages the application's theming system, defining multiple color schemes (e.g., Catppuccin, Nord, Tokyo Night).
 
 ## Building and Running
 
-To set up and run the project:
+The project primarily uses **Bun** for its workflow:
 
-1.  **Installation:**
-    ```bash
-    yarn install
-    ```
-2.  **Building:** Compiles the TypeScript source code into JavaScript.
-    ```bash
-    yarn build
-    ```
-3.  **Running:** Starts the TUI application.
-    ```bash
-    yarn start
-    ```
-4.  **Development:** Runs the application in watch mode using `tsx`.
-    ```bash
-    yarn dev
-    ```
+1. **Installation:**
+   ```bash
+   bun install
+   ```
 
-## Testing
+2. **Development:** Runs the application in watch mode.
+   ```bash
+   bun dev
+   ```
 
-To run tests and lint checks:
+3. **Running from Source:**
+   ```bash
+   bun start
+   ```
 
-```bash
-yarn test
-```
+4. **Building Binaries:** Compiles the application into standalone executables for multiple platforms (Linux, macOS).
+   ```bash
+   bun run build:binary
+   ```
 
-This command performs:
-*   Prettier check (`prettier --check .`)
-*   XO linting (`xo`)
-*   Ava unit tests (`ava`)
+## Testing and Quality
 
-## Development Conventions
-
-*   **Code Formatting:** Enforced using Prettier. Configuration in `.prettierrc` specifies no semicolons (`semi: false`), single quotes (`singleQuote: true`), and a print width of 80 characters (`printWidth: 80`).
-*   **Linting:** Handled by XO, extending `eslint-config-xo-react`.
-*   **TypeScript:** Uses `@sindresorhus/tsconfig` for base configuration.
+- **Linting:** `npx xo`
+- **Formatting:** `npx prettier --check .`
+- **Tests:** `npx ava` (Note: Run `bun test` if the project is configured for it, but currently uses `ava`).
 
 ## Keybindings
 
-`note-tui` supports common Vim-like keybindings for efficient navigation and interaction. Refer to the `readme.md` for a detailed list of keybindings for `Idle Mode`, `Trash Mode`, and `Search Mode`.
+`note-tui` features Vim-like navigation:
+- `j`/`k` or arrows for movement.
+- `h`/`l` or `Tab` to switch focus between List and Preview panes.
+- `e` or `Enter` to edit a note in your default editor.
+- `n` to create a new note.
+- `/` or `s` to enter search mode.
+- `t` to view trash; `r` to restore; `d` to archive or delete.
+- `<`/`>` to cycle through themes.

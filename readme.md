@@ -26,7 +26,7 @@ To start the `note-tui` application directly from the source code, make sure you
 2. Run the application:
 
    ```bash
-   bun start
+   bun dev
    ```
 
 ## Keybindings

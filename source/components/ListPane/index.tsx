@@ -31,7 +31,7 @@ const ListPane = () => {
 	} = useNavigation();
 
 	const theme = useTheme(s => s.theme);
-	const {accentColor, textColor, borderColor, foregroundColor} = useTheme(
+	const {accentColor, textColor, foregroundColor} = useTheme(
 		s => s.themeConfig,
 	);
 
@@ -59,7 +59,7 @@ const ListPane = () => {
 	return (
 		<>
 			{(isSearch ? searchKeyword !== undefined : searchKeyword) && (
-				<Box gap={1} borderColor={borderColor} borderStyle="single" height={3}>
+				<Box gap={1} borderColor="whiteBright" borderStyle="round" height={3}>
 					<Text>&#128269;</Text>
 					{isSearch ? (
 						<TextInput
@@ -73,20 +73,22 @@ const ListPane = () => {
 				</Box>
 			)}
 
-			{isTrash && (
-				<Box marginBottom={1}>
-					<Text color={accentColor} backgroundColor={foregroundColor}>
-						{' '}
-						Trash{' '}
+			<Box marginBottom={1}>
+				<Text color={accentColor} backgroundColor={foregroundColor}>
+					{' '}
+					{isTrash ? 'Trash' : 'Notes'}{' '}
+				</Text>
+			</Box>
+
+			{!list?.length && !isCreatingFile && (
+				<Box>
+					<Text color="whiteBright">
+						{isTrash ? ' Empty' : " Press 'n' to create note."}
 					</Text>
 				</Box>
 			)}
 
-			<ScrollList
-				ref={listRef}
-				selectedIndex={selectedIndex}
-				height={isCreatingFile ? undefined : '100%'}
-			>
+			<ScrollList ref={listRef} selectedIndex={selectedIndex} height="100%">
 				{list.map(({filename, label}, i) => {
 					let fileLabel = label;
 					const isSelected = i === selectedIndex;
@@ -118,18 +120,18 @@ const ListPane = () => {
 						</Box>
 					);
 				})}
-			</ScrollList>
 
-			{isCreatingFile && (
-				<Box width="100%" backgroundColor={foregroundColor} overflow="hidden">
-					<Text color={accentColor}> {list?.length + 1}. </Text>
-					<TextInput
-						value={fileLabel}
-						placeholder="New Note"
-						onChange={setFileLabel}
-					/>
-				</Box>
-			)}
+				{isCreatingFile && (
+					<Box width="100%" backgroundColor={foregroundColor} overflow="hidden">
+						<Text color={accentColor}> {list?.length + 1}. </Text>
+						<TextInput
+							value={fileLabel}
+							placeholder="New Note"
+							onChange={setFileLabel}
+						/>
+					</Box>
+				)}
+			</ScrollList>
 
 			{isShowThemeNoti && !isCreatingFile && (
 				<Box width="100%" overflow="hidden">

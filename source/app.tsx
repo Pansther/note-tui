@@ -56,7 +56,10 @@ const App = () => {
 					width="30%"
 					borderStyle="round"
 					flexDirection="column"
-					borderColor={cx({[accentColor]: focusPane === FocusPane.List})}
+					borderColor={cx({
+						whiteBright: focusPane !== FocusPane.List,
+						[accentColor]: focusPane === FocusPane.List,
+					})}
 				>
 					<ListPane />
 				</Box>
@@ -64,7 +67,10 @@ const App = () => {
 					width="70%"
 					borderStyle="round"
 					flexDirection="column"
-					borderColor={cx({[accentColor]: focusPane === FocusPane.Preview})}
+					borderColor={cx({
+						whiteBright: focusPane !== FocusPane.Preview,
+						[accentColor]: focusPane === FocusPane.Preview,
+					})}
 				>
 					<PreviewPane />
 				</Box>

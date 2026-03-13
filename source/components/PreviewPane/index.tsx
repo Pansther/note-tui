@@ -1,25 +1,15 @@
 import {useEffect, useRef} from 'react';
-import chalk from 'chalk';
-import {marked} from 'marked';
 import {useShallow} from 'zustand/shallow';
-import TerminalRenderer from 'marked-terminal';
 import {Box, Spacer, Text, useStdout} from 'ink';
 import {ScrollView, ScrollViewRef} from 'ink-scroll-view';
 
+import useMarked from './useMarked.js';
 import useStore from '../../store/index.js';
 import useTheme from '../../theme/index.js';
 import useDimension from '../../hooks/useDimension.js';
 import usePreviewNavigation from '../../hooks/usePreviewNavigation/index.js';
 
 import {formatDateTime} from '../../helper/date.js';
-
-marked.setOptions({
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	renderer: new TerminalRenderer({
-		hr: () => chalk.gray('─'.repeat(30)) + '\n',
-	}),
-});
 
 const PreviewPane = () => {
 	const {stdout} = useStdout();
@@ -38,6 +28,8 @@ const PreviewPane = () => {
 	const {dimensions} = useDimension();
 	const {textColor, accentColor, foregroundColor, secondaryColor, errorColor} =
 		useTheme(s => s.themeConfig);
+
+	const marked = useMarked();
 
 	usePreviewNavigation({viewRef});
 
@@ -59,7 +51,7 @@ const PreviewPane = () => {
 
 	return (
 		<>
-			<ScrollView width="100%" ref={viewRef} height={dimensions.height - 5}>
+			<ScrollView width="100%" ref={viewRef} height={dimensions.height - 6}>
 				<Text wrap="wrap" color={textColor}>
 					{marked.parse(previewData?.content, {
 						async: false,
@@ -85,7 +77,7 @@ const PreviewPane = () => {
 							{formatDateTime(previewData.meta?.createdDate) || '-'}
 						</Text>
 					</Box>
-					<Text>|</Text>
+					<Text color="whiteBright">|</Text>
 					<Text
 						wrap="wrap"
 						color={secondaryColor}
@@ -100,7 +92,7 @@ const PreviewPane = () => {
 
 					{previewData?.meta?.deletedDate && (
 						<>
-							<Text>|</Text>
+							<Text color="whiteBright">|</Text>
 							<Text
 								wrap="wrap"
 								color={errorColor}

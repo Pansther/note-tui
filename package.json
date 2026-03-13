@@ -20,7 +20,7 @@
 		"ink-scroll-list": "^0.4.1",
 		"ink-scroll-view": "^0.3.6",
 		"ink-text-input": "^6.0.0",
-		"marked": "^17.0.3",
+		"marked": "^17.0.4",
 		"marked-terminal": "^7.3.0",
 		"meow": "^11.0.0",
 		"nanoid": "^5.1.6",
