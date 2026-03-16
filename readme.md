@@ -1,6 +1,12 @@
 # note-tui
 
-A terminal user interface (TUI) application for managing notes. `note-tui` provides a clean and efficient way to interact with your notes directly from the command line, featuring a split-pane view for note listing and content preview, with full Markdown support.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
+[![Releases](https://img.shields.io/github/v/release/Pansther/note-tui)](https://github.com/Pansther/note-tui/releases)
+
+A **Vim-friendly** terminal user interface (TUI) application for managing notes. `note-tui` provides a clean and efficient way to interact with your notes directly from the command line, featuring a split-pane view for note listing and content preview, with full Markdown support and seamless Vim/Neovim integration.
+
+![cover](./demo/cover.png)
 
 ## Features
 
@@ -8,6 +14,32 @@ A terminal user interface (TUI) application for managing notes. `note-tui` provi
 - **Markdown Support**: Render your notes with full Markdown syntax highlighting.
 - **Intuitive Navigation**: Easily browse, select, and view notes using keyboard shortcuts.
 - **Themable**: Customize the application's appearance to your preference.
+
+## Showcases
+
+### Run `note-tui`
+
+![demo](./demo/demo.gif)
+
+### Preview Note
+
+![preview](./demo/preview.gif)
+
+### Edit Note
+
+![edit](./demo/edit.gif)
+
+### Search Notes
+
+![search](./demo/search.gif)
+
+### Trash Notes (Restore and Delete)
+
+![trash](./demo/trash.gif)
+
+### Themes
+
+![theme](./demo/theme.gif)
 
 ## Installation
 
@@ -22,8 +54,16 @@ brew install note-tui
 
 ### Node
 
+npm
+
 ```bash
 npm i -g note-tui
+```
+
+yarn
+
+```bash
+yarn add note-tui -G
 ```
 
 ### From Source
@@ -91,6 +131,10 @@ To start the `note-tui` application directly from the source code, make sure you
 | ctrl+u     | clear          |
 | return,esc | unfocus search |
 | q,ctrl+c   | exit           |
+
+## Configuration
+
+`note-tui` stores your notes in `~/.notes`.
 
 ## License
 
