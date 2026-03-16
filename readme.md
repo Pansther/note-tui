@@ -6,7 +6,7 @@
 
 A **Vim-friendly** terminal user interface (TUI) application for managing notes. `note-tui` provides a clean and efficient way to interact with your notes directly from the command line, featuring a split-pane view for note listing and content preview, with full Markdown support and seamless Vim/Neovim integration.
 
-![cover](./demo/cover.png)
+![cover](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/cover.png)
 
 ## Features
 
@@ -19,27 +19,27 @@ A **Vim-friendly** terminal user interface (TUI) application for managing notes.
 
 ### Run `note-tui`
 
-![demo](./demo/demo.gif)
+![demo](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/demo.gif)
 
 ### Preview Note
 
-![preview](./demo/preview.gif)
+![preview](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/preview.gif)
 
 ### Edit Note
 
-![edit](./demo/edit.gif)
+![edit](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/edit.gif)
 
 ### Search Notes
 
-![search](./demo/search.gif)
+![search](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/search.gif)
 
 ### Trash Notes (Restore and Delete)
 
-![trash](./demo/trash.gif)
+![trash](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/trash.gif)
 
 ### Themes
 
-![theme](./demo/theme.gif)
+![theme](https://raw.githubusercontent.com/Pansther/note-tui/main/demo/theme.gif)
 
 ## Installation
 
