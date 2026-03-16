@@ -60,10 +60,8 @@ npm
 npm i -g note-tui
 ```
 
-yarn
-
 ```bash
-yarn add note-tui -G
+yarn global add note-tui
 ```
 
 ### From Source
@@ -135,6 +133,16 @@ To start the `note-tui` application directly from the source code, make sure you
 ## Configuration
 
 `note-tui` stores your notes in `~/.notes`.
+
+## Troubleshooting
+
+### Color Issues
+
+If the colors in `note-tui` appear dull or incorrect, your terminal might not be identifying itself as a True Color terminal. You can fix this by adding the following to your shell configuration (`.zshrc` or `.bashrc`):
+
+```bash
+export COLORTERM=truecolor
+```
 
 ## License
 

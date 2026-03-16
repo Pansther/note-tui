@@ -3,6 +3,9 @@
 	"version": "0.1.2",
 	"license": "MIT",
 	"type": "module",
+	"author": "Pansther",
+	"description": "A Vim-friendly terminal user interface (TUI) application for managing notes.",
+	"repository": "Pansther/note-tui",
 	"engines": {
 		"node": ">=20"
 	},
