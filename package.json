@@ -52,15 +52,6 @@
 		"typescript": "^5.0.3",
 		"xo": "^0.53.1"
 	},
-	"ava": {
-		"extensions": {
-			"ts": "module",
-			"tsx": "module"
-		},
-		"nodeArguments": [
-			"--loader=ts-node/esm"
-		]
-	},
 	"xo": {
 		"extends": "xo-react",
 		"prettier": true,
@@ -68,5 +59,13 @@
 			"react/prop-types": "off"
 		}
 	},
-	"prettier": "@vdemedes/prettier-config"
+	"prettier": "@vdemedes/prettier-config",
+	"keywords": [
+		"react",
+		"ink",
+		"note",
+		"tui",
+		"vim",
+		"nvim"
+	]
 }
