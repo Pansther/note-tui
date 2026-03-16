@@ -1,13 +1,24 @@
 {
 	"name": "note-tui",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"license": "MIT",
 	"type": "module",
 	"engines": {
 		"node": ">=20"
 	},
+	"bin": {
+		"note-tui": "./dist/cli.js"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"dev": "bun --watch source/cli.tsx",
+		"build": "bun build ./source/cli.tsx --outfile ./dist/cli.js --target node",
 		"build:binary": "rm -rf releases && mkdir releases && bun build ./source/cli.tsx --compile --minify --target bun-linux-x64 --outfile releases/note-tui-linux-x64 && bun build ./source/cli.tsx --compile --minify --target bun-darwin-x64 --outfile releases/note-tui-darwin-x64 && bun build ./source/cli.tsx --compile --minify --target bun-darwin-arm64 --outfile releases/note-tui-darwin-arm64",
 		"compress:binary": "tar -czvf releases/note-tui-linux-x64.tar.gz -C releases note-tui-linux-x64 && tar -czvf releases/note-tui-darwin-x64.tar.gz -C releases note-tui-darwin-x64 && tar -czvf releases/note-tui-darwin-arm64.tar.gz -C releases note-tui-darwin-arm64"
 	},
@@ -23,10 +34,8 @@
 		"marked": "^17.0.4",
 		"marked-terminal": "^7.3.0",
 		"meow": "^11.0.0",
-		"nanoid": "^5.1.6",
 		"react": "^19.2.4",
 		"react-devtools-core": "^7.0.1",
-		"tsx": "^4.21.0",
 		"zustand": "^5.0.11"
 	},
 	"devDependencies": {
@@ -34,7 +43,6 @@
 		"@types/marked-terminal": "^6.1.1",
 		"@types/react": "^19.2.14",
 		"@vdemedes/prettier-config": "^2.0.1",
-		"ava": "^5.2.0",
 		"chalk": "^5.6.2",
 		"eslint-config-xo-react": "^0.27.0",
 		"eslint-plugin-react": "^7.32.2",

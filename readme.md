@@ -13,6 +13,19 @@ A terminal user interface (TUI) application for managing notes. `note-tui` provi
 
 Download pre-built binaries for your platform from the [Releases](https://github.com/Pansther/note-tui/releases) page.
 
+### Homebrew (MacOS and Linux)
+
+```bash
+brew tap Pansther/note-tui
+brew install note-tui
+```
+
+### Node
+
+```bash
+npm i -g note-tui
+```
+
 ### From Source
 
 To start the `note-tui` application directly from the source code, make sure you have Bun (version 1.x or higher) installed.
